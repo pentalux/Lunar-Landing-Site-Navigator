@@ -29,7 +29,7 @@ This simulation demonstrates how planetary ephemerides, lunar elevation models, 
 
 The application helps users investigate how location, mission dates, and observer height affect lighting, power-generation opportunities, and communication visibility.
 
-<img width="1602" height="812" alt="Screenshot 2026-11-15 193627" src="https://github.com/user-attachments/assets/44e610dd-572c-4512-b23f-676aaac89617" />
+<img width="1602" height="862" alt="Screenshot 2026-11-15 193716" src="https://github.com/user-attachments/assets/00c98ab4-e570-4b18-b248-531523dd1a21" />
 
 
 ## How It Works
