@@ -94,7 +94,8 @@ Visibility uses body-center geometry without eclipse or radio-link modeling. Sol
 
 ---
 
-*Created by P.A. Galochkin (@pentalux) and D.A. Golomako (@Lokgout) for the 2026 NASA International Space Apps Challenge.*
+*Created by P.A. Galochkin (@pentalux) — project concept, application development, scientific data integration, 3D modeling, and interface design — with contributions from D.A. Golomako (@Lokgout) in demo video preparation and interface design, for the 2026 NASA International Space Apps Challenge.*
+
 Team "The Great Duo of Pentalux and Lokgout"
 
 <img width="500" height="500" alt="5463380335786664176-removebg-preview" src="https://github.com/user-attachments/assets/32a98bd1-9286-4175-81b7-2d7d5844ba16" />
