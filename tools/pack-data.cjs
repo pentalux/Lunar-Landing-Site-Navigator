@@ -1,0 +1,2 @@
+process.chdir(require('node:path').resolve(__dirname, '..'));
+const fs=require('fs'),path=require('path');for(const [file,field] of [['Ephemeris.js','rows'],['TerrainData.js','globalHeights']]){let p=path.join('HackathonContent/assets/science',file),s=fs.readFileSync(p,'utf8');s=s.replace(new RegExp('var '+field+'=(\\[[\\s\\S]*?\\]);'),(_,a)=>'var '+field+'=JSON.parse('+JSON.stringify(a)+');');fs.writeFileSync(p,s);}

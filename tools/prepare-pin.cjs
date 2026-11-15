@@ -1,0 +1,4 @@
+process.chdir(require('node:path').resolve(__dirname, '..'));
+// The GLB root includes its Blender object location. Preserve the file and
+// compensate only its evaluated tip, keeping the author-provided origin.
+const fs=require('fs');const b=fs.readFileSync('HackathonContent/assets/pin.glb'),n=b.readUInt32LE(12),g=JSON.parse(b.subarray(20,20+n)),node=g.nodes[0],a=g.accessors[g.meshes[node.mesh].primitives[0].attributes.POSITION],scale=node.scale||[1,1,1],t=node.translation||[0,0,0];if(node.rotation||node.matrix)throw Error('Pin transform needs full evaluation');const min=a.min.map((v,i)=>v*scale[i]+t[i]),max=a.max.map((v,i)=>v*scale[i]+t[i]);fs.writeFileSync('HackathonContent/assets/science/PinGeometry.js','.pragma library\nvar geometry='+JSON.stringify({tip:[0,min[1],0],height:max[1]-min[1]})+';\n');console.log({min,max,height:max[1]-min[1]});

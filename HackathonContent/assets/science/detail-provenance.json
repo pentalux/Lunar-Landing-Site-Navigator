@@ -1,0 +1,34 @@
+{
+  "source": "NASA LOLA LDEM 64 ppd / GSFC south polar 80 m",
+  "globalWidth": 23040,
+  "globalHeight": 11520,
+  "globalTileSize": 720,
+  "globalResolution": 473.80235037733564,
+  "polarWidth": 7600,
+  "polarHeight": 7600,
+  "polarTileSize": 512,
+  "polarTransform": [
+    80.0,
+    0.0,
+    -304000.0,
+    0.0,
+    -80.0,
+    304000.0
+  ],
+  "polarResolution": 80,
+  "encoding": "little-endian uint16; height = value * 0.5 - 10000 metres; 65535 = unavailable",
+  "albedoWidth": 16384,
+  "albedoHeight": 8192,
+  "globalMeshColumns": 1024,
+  "globalMeshRows": 512,
+  "sourceUrls": [
+    "https://svs.gsfc.nasa.gov/4720/",
+    "https://pgda.gsfc.nasa.gov/products/90"
+  ],
+  "globeProjection": "cylindrical band from -45 to 45 degrees; stereographic north/south caps",
+  "polarTextureHalfExtentMetres": 1500000,
+  "polarAlbedoSize": 4096,
+  "polarNormalSize": 4096,
+  "capRadialIntervals": 256,
+  "unitsPerLunarRadius": 1000
+}

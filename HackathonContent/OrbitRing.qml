@@ -1,0 +1,23 @@
+pragma ComponentBehavior: Bound
+import QtQuick
+import QtQuick3D
+
+Node {
+    id: ring
+    property real radius: 120
+    property color tint: "#526877"
+    property real thickness: 0.35
+    Repeater3D {
+        model: 128
+        Model {
+            required property int index
+            x: Math.sin(index * Math.PI / 64) * ring.radius
+            z: Math.cos(index * Math.PI / 64) * ring.radius
+            eulerRotation.y: index * 360 / 128
+            source: "#Cube"
+            scale: Qt.vector3d(2 * Math.PI * ring.radius / 128 / 100, ring.thickness / 100, ring.thickness / 100)
+            materials: PrincipledMaterial { baseColor: ring.tint; lighting: PrincipledMaterial.NoLighting }
+        }
+    }
+}
+

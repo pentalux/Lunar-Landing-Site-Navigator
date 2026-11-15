@@ -1,0 +1,13 @@
+.pragma library
+function add(a,b){return [a[0]+b[0],a[1]+b[1],a[2]+b[2]];}
+function mul(a,s){return [a[0]*s,a[1]*s,a[2]*s];}
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];}
+function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
+function unit(a){return mul(a,1/Math.max(1e-12,Math.sqrt(dot(a,a))));}
+function mix(a,b,t){return add(mul(a,1-t),mul(b,t));}
+function lookRotation(eye,target,up){var z=unit(add(eye,mul(target,-1))),x=unit(cross(up,z)),y=cross(z,x),m00=x[0],m11=y[1],m22=z[2],trace=m00+m11+m22,w,qx,qy,qz,s;if(trace>0){s=Math.sqrt(trace+1)*2;w=s/4;qx=(y[2]-z[1])/s;qy=(z[0]-x[2])/s;qz=(x[1]-y[0])/s;}else if(m00>m11&&m00>m22){s=Math.sqrt(1+m00-m11-m22)*2;w=(y[2]-z[1])/s;qx=s/4;qy=(y[0]+x[1])/s;qz=(z[0]+x[2])/s;}else if(m11>m22){s=Math.sqrt(1+m11-m00-m22)*2;w=(z[0]-x[2])/s;qx=(y[0]+x[1])/s;qy=s/4;qz=(z[1]+y[2])/s;}else{s=Math.sqrt(1+m22-m00-m11)*2;w=(x[1]-y[0])/s;qx=(z[0]+x[2])/s;qy=(z[1]+y[2])/s;qz=s/4;}return Qt.quaternion(w,qx,qy,qz);}
+function triangleHeight(a,b,c,x,z){var den=(b[2]-c[2])*(a[0]-c[0])+(c[0]-b[0])*(a[2]-c[2]);if(Math.abs(den)<1e-12)return null;var u=((b[2]-c[2])*(x-c[0])+(c[0]-b[0])*(z-c[2]))/den,v=((c[2]-a[2])*(x-c[0])+(a[0]-c[0])*(z-c[2]))/den;if(u< -1e-6||v< -1e-6||u+v>1.000001)return null;return u*a[1]+v*b[1]+(1-u-v)*c[1];}
+function terrainHeight(vertices,n,span,x,z){var i=Math.floor((x/span+.5)*n),j=Math.floor((z/span+.5)*n);for(var y=Math.max(0,j-2);y<=Math.min(n-1,j+2);y++)for(var xx=Math.max(0,i-2);xx<=Math.min(n-1,i+2);xx++){var a=y*(n+1)+xx,b=a+n+1,h=triangleHeight(vertices[a],vertices[b],vertices[a+1],x,z);if(h!==null)return h;h=triangleHeight(vertices[a+1],vertices[b],vertices[b+1],x,z);if(h!==null)return h;}return null;}
+function rotate(q,p){var u=[q.x,q.y,q.z],t=mul(cross(u,p),2);return add(p,add(mul(t,q.w),cross(u,t)));}
+function alignUp(normal){var n=unit(normal),d=Math.sqrt(2*(1+n[1]));if(d<1e-9)return {w:0,x:1,y:0,z:0};return {w:d/2,x:n[2]/d,y:0,z:-n[0]/d};}
+function supportPose(feet,scale,heightAt){var pts=feet.map(function(p){return mul(p,scale);}),sx=0,sz=0,sxx=0,szz=0,sxz=0,sxh=0,szh=0,sh=0;for(var i=0;i<pts.length;i++){var p=pts[i],h=heightAt(p[0],p[2]);sx+=p[0];sz+=p[2];sxx+=p[0]*p[0];szz+=p[2]*p[2];sxz+=p[0]*p[2];sxh+=p[0]*h;szh+=p[2]*h;sh+=h;}var n=pts.length,xx=sxx-sx*sx/n,zz=szz-sz*sz/n,xz=sxz-sx*sz/n,xh=sxh-sx*sh/n,zh=szh-sz*sh/n,det=xx*zz-xz*xz,a=(xh*zz-zh*xz)/det,b=(zh*xx-xh*xz)/det,q=alignUp([-a,1,-b]),rotated=pts.map(function(p){return rotate(q,p);}),required=rotated.map(function(p){return heightAt(p[0],p[2])-p[1];}),y=Math.max.apply(Math,required);return {y:y,rotation:q,feet:rotated,gaps:required.map(function(h){return y-h;})};}

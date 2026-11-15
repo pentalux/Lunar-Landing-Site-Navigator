@@ -1,0 +1,8 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const root=path.join(__dirname,'../HackathonContent');
+class Request {open(method,url){this.url=url;}send(){const b=fs.readFileSync(this.url);this.status=200;this.response=b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength);}}
+const t=require('./runtime.cjs').terrain;
+test('base tiles match independent source pixels and GDAL polar projection',()=>{for(const p of require('./terrain-reference.json')){let h=p.dataset==='global'?t.interpolate('global',p.col,p.row):t.elevation(p.lat,p.lon);assert.ok(Math.abs(h-p.height)<.251,`${p.dataset} ${p.row},${p.col}: ${h} vs ${p.height}`);if(p.dataset==='south'){const xy=t.polarPixel(p.lat,p.lon);assert.ok(Math.abs(xy[0]-p.col)<1e-7);assert.ok(Math.abs(xy[1]-p.row)<1e-7);}}});
+test('longitude seam and pole heights are continuous and finite',()=>{for(const lat of [-90,-85,-45,0,45,89.99,90]){assert.ok(Number.isFinite(t.elevation(lat,-180)));assert.ok(Math.abs(t.elevation(lat,-180)-t.elevation(lat,180))<1e-7);}assert.equal(t.resolution(-89,60),80);assert.ok(t.resolution(0,0)>473&&t.resolution(0,0)<475);});
+test('a crater region retains kilometre-scale measured relief',()=>{let heights=[];for(let i=0;i<=100;i++)heights.push(t.elevation(9.62+(i-50)*.04,-20.08));const relief=Math.max(...heights)-Math.min(...heights);assert.ok(relief>2000,`Crater relief ${relief} m`);assert.ok(Math.max(...heights)<12000);});
+test('tile cache remains bounded while traversing the globe',()=>{for(let lon=-179;lon<180;lon+=6)t.elevation(20,lon);for(let lon=-179;lon<180;lon+=6)t.elevation(-20,lon);assert.ok(Object.keys(t.cache).length<=96);});
