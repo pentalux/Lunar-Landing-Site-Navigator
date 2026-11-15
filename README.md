@@ -1,7 +1,7 @@
 https://github.com/user-attachments/assets/2a8eee3b-e24e-4676-a9ae-01e6c2aa5aae
 
 
-# LunarNavigator Pro
+# Lunar Landing Site Navigator
 
 A computational model and 3D visualization tool for evaluating lunar landing-site lighting and Earth visibility.
 
@@ -95,4 +95,5 @@ Visibility uses body-center geometry without eclipse or radio-link modeling. Sol
 ---
 
 *Created by P.A. Galochkin (@pentalux) and D.A. Golomako (@Lokgout) for the 2026 NASA International Space Apps Challenge.*
+<img width="640" height="640" alt="5463380335786664176" src="https://github.com/user-attachments/assets/42b174db-afb5-4e5d-a531-a46c3ec537dd" />
 
