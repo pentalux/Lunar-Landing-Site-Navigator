@@ -44,7 +44,7 @@ The Sun is considered visible when its center is above the terrain horizon. Eart
 Horizontal-panel power is calculated as:
 
 $$
-P(t) = V_{\mathrm{Sun}}(t) \cdot P_{\mathrm{rated}} \cdot \max\left(0, \sin\alpha_{\mathrm{Sun}}(t)\right)
+\Large P(t) = V_{\mathrm{Sun}}(t) \cdot P_{\mathrm{rated}} \cdot \max\left(0, \sin\alpha_{\mathrm{Sun}}(t)\right)
 $$
 
 where $V_{\mathrm{Sun}}$ equals 1 when the Sun is visible and 0 when blocked by terrain.
