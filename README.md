@@ -21,8 +21,6 @@ The program is designed to:
 - Save mission configurations and restore them from history.
 - Compare saved missions and reference sites.
 
-%%%%%%%%%%%%
-
 ## Project Objective
 
 This simulation demonstrates how planetary ephemerides, lunar elevation models, and geometric visibility calculations can support preliminary landing-site assessment.
