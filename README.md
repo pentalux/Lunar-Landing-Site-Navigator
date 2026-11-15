@@ -1,115 +1,98 @@
 https://github.com/user-attachments/assets/2a8eee3b-e24e-4676-a9ae-01e6c2aa5aae
 
 
-# Lunar Landing Site Navigator — 1.0
+# LunarNavigator Pro
 
-A 3D mission planning tool for rapid evaluation of lunar landing site options across different dates and mission windows.
+A computational model and 3D visualization tool for evaluating lunar landing-site lighting and Earth visibility.
 
-This project addresses the NASA Space Apps Challenge objective of assessing lunar landing site feasibility by visualizing Sun and Earth positions relative to the local horizon, calculating sunlight and direct-to-Earth communication windows, and comparing multiple candidate sites side-by-side.
-
-## Windows download
-
-
-Use **LunarNavigator-1.0-Setup.exe** from the [GitHub release](https://github.com/pentalux/Lunar-Landing-Site-Navigator/releases/tag/v1.0.0). The installer includes Qt, QML plugins and the MinGW runtime, installs for the current user, and creates a Start menu shortcut. No Qt or Python installation is needed to run it.
-
-Alternatively, extract **LunarNavigator-1.0-Windows-x64.zip** completely and run `LunarNavigator.exe` inside the extracted folder. Keep its DLLs, `platforms` and `qml` directories together. Copying only the application EXE is not a portable deployment.
-
-The viewer combines an overview globe with regional terrain.
-
+The project combines NASA lunar terrain data with SPICE-derived Sun and Earth positions to explore conditions across different locations and mission windows. It estimates sunlight availability, terrain obstruction, direct-to-Earth visibility, and horizontal solar-panel output.
 
 ## Core Features
 
 The program is designed to:
 
-- Save up to 20 mission configurations, restore them from history, and compare saved custom locations with reference presets. Saved configurations retain their dates and hardware settings.
+- Select reference landing sites or choose custom lunar coordinates.
+- Visualize the lunar globe, local terrain, and a 3D lander.
+- Calculate Sun and Earth elevation and azimuth relative to the selected site.
+- Reconstruct a 360° local terrain horizon.
+- Estimate sunlight availability, Earth visibility, and the longest darkness interval.
+- Calculate horizontal solar-panel power and estimated energy generation.
+- Display an interactive timeline highlighting simultaneous sunlight and Earth visibility.
+- Save mission configurations and restore them from history.
+- Compare saved missions and reference sites.
 
-- Select landing sites from curated mission presets (Artemis South Pole targets, Apollo, CLPS) or input custom lunar coordinates.
-- Compute solar and Earth elevation/azimuth trajectories using NASA NAIF SPICE (`DE421`) ephemerides and optical libration models.
-- Reconstruct 360° local horizon profiles from NASA LOLA Digital Elevation Models (DEM) without atmospheric refraction.
-- Calculate live countdown timers to sunset and Earthset, sunlight availability percentages, longest continuous darkness periods, and horizontal solar panel output.
-- Visualize global orbital geometry, 3D local terrain with slope overlays, and side-by-side multi-site comparisons across customizable mission timelines.
-
+%%%%%%%%%%%%
 
 ## Project Objective
 
-This simulation demonstrates how real lunar topography data, planetary ephemerides, and 3D terrain ray-casting can be combined to evaluate landing site viability, power survival, and communication constraints prior to mission deployment.
+This simulation demonstrates how planetary ephemerides, lunar elevation models, and geometric visibility calculations can support preliminary landing-site assessment.
 
+The application helps users investigate how location, mission dates, and observer height affect lighting, power-generation opportunities, and communication visibility.
+
+%%%%%%%%%%%%
 
 ## How It Works
 
-The simulation pipeline integrates three core layers:
+The computational model consists of three main components:
 
-- **Ephemeris & Geometry Engine:** Computes topocentric Sun and Earth vectors relative to the lunar surface for any chosen UTC window.
-- **LOLA Horizon Ray-Casting:** Evaluates 360° terrain obstruction angles around the landing mast to determine true geometric line-of-sight.
-- **Interactive 3D & Timeline Workspace:** Renders a seamless transition from the global Moon view to local LOLA terrain with dynamic shadows, a 3D lander touchdown animation, and a multi-track Gantt timeline.
+- **Orbital Geometry:** Precomputed NASA/JPL SPICE vectors and lunar orientation data are interpolated to determine Sun and Earth directions relative to the selected observer.
+- **Terrain Horizon:** NASA LOLA elevation profiles are sampled around the site to calculate terrain obstruction angles, accounting for observer height and lunar curvature.
+- **Mission Analysis:** Hourly midpoint samples estimate sunlight availability, Earth visibility, favorable periods, darkness duration, and solar-panel output.
 
+The Sun is considered visible when its center is above the terrain horizon. Earth visibility additionally requires the user-defined angular clearance margin.
 
-## Computational Methods & Mathematical Model
+Horizontal-panel power is calculated as:
 
-1. **Topocentric Ephemerides & Libration (`SPICE DE421`):**
-   - Planetary state vectors for the Sun and Earth relative to the Moon's center are queried in the `MOON_ME` (Mean Earth / Polar Axis) body-fixed reference frame using NASA NAIF SPICE kernels (`de421.bsp`).
-   - Vectors are transformed from selenocentric to topocentric East-North-Up (ENU) local coordinates at the exact landing latitude, longitude, and LOLA surface elevation, inherently capturing lunar axial tilt ($1.54^\circ$), orbital eccentricity, and optical/physical libration.
+$$
+P(t) = V_{\mathrm{Sun}}(t)\,P_{\mathrm{rated}}
+\max\left(0,\sin\alpha_{\mathrm{Sun}}(t)\right)
+$$
 
-2. **Airless Horizon & Terrain Ray-Casting (`LOLA DEM`):**
-   - Because the Moon lacks an atmosphere, atmospheric refraction is set to zero ($0^\circ$). The visible horizon is governed purely by spherical curvature and local topography.
-   - For each candidate site, the solver samples radial elevation profiles across $360^\circ$ of azimuth (out to $100\text{–}150\text{ km}$ from LOLA Digital Elevation Models) and computes the maximum terrain obstruction angle:
-     $$\theta_{\text{horizon}}(\text{Az}) = \max_{r} \arctan\left(\frac{h(r) - (h_0 + h_{\text{mast}}) - \frac{r^2}{2 R_{\text{Moon}}}}{r}\right)$$
-     accounting for mast height $h_{\text{mast}}$ and lunar curvature drop $\frac{r^2}{2 R_{\text{Moon}}}$.
+where $V_{\mathrm{Sun}}$ equals 1 when the Sun is visible and 0 when blocked by terrain.
 
-3. **Line-of-Sight, Power & Countdown Windows:**
-   - **Solar Illumination:** True when solar elevation $\alpha_{\text{Sun}}(t) > \theta_{\text{horizon}}(\text{Az}_{\text{Sun}})$. Instantaneous horizontal array power is modeled via cosine projection:
-     $$P(t) = P_{\text{rated}} \cdot \max(0, \sin \alpha_{\text{Sun}}(t))$$
-   - **Direct-to-Earth (DTE) Link:** Valid when Earth elevation exceeds the local horizon plus the user-defined clearance margin:
-     $$\alpha_{\text{Earth}}(t) > \theta_{\text{horizon}}(\text{Az}_{\text{Earth}}) + \Delta\theta_{\text{margin}}$$
-   - **Operational Countdowns:** The solver scans forward along the time series to determine exact remaining hours/minutes until the next horizon crossing (`Time to Sunset` and `Time to Earthset`) as well as the longest continuous darkness interval.
+The **Favorable Window** track identifies periods when sunlight and Earth visibility overlap. Users can move the timeline cursor to inspect conditions at a selected simulation time.
 
-## Tech Stack & Data Sources
+Bundled data covers **2026–2027**, with mission durations of **28, 45, 60, or 90 days**.
 
-- **Frontend & 3D Rendering:** Qt 6, QML, Qt Quick 3D (`RuntimeLoader` for `.glb` spacecraft assets, PBR materials, dynamic directional shadows).
-- **Backend & Astronomy Pipeline:** Python / C++ computational engine using NASA NAIF SPICE (`DE421` / `MOON_ME`).
-- **3D Modeling:** Blender (custom octagonal lunar lander model exported to `.glb`).
-- **NASA Datasets:**
-  - **NASA Lunar Orbiter Laser Altimeter (LOLA) DEM:** Regional topography, slope angles, and 360° horizon obstruction profiles.
-  - **NASA NAIF SPICE Toolkit (`de421.bsp`):** High-precision solar/Earth ephemerides and lunar libration.
-  - **NASA CGI Moon Kit:** Global lunar surface albedo and elevation textures.
+%%%%%%%%%%%%
 
-## AI / Synthetic Intelligence (SI) Disclosure
+## Site Comparison
 
-Large Language Models (LLM) were used during development to assist with QML UI layout structuring, boilerplate code generation, and documentation formatting. All astronomical calculations, NASA LOLA/SPICE data integration, 3D lander modeling, and engineering validation were implemented and verified by the team. No NASA logos, flags, or official emblems were generated or modified using AI.
+The **Compare sites** button opens a detailed comparison of saved mission configurations and reference locations.
+
+The comparison includes:
+
+- Sunlight availability.
+- Earth-visibility availability.
+- Total favorable hours and their percentage of the mission window.
+- Longest darkness interval.
+- Mean solar power and estimated energy generation.
+- Coordinates, mission dates, and observer settings.
+
+**Save** stores the current configuration and adds it to the comparison. **Restore** opens a history of up to 20 saved configurations.
+
+Saved missions retain their own dates and hardware settings, while reference presets use the current settings. Equivalent dates and parameters should be used when comparing locations under the same conditions.
+
+%%%%%%%%%%%%
+
+## Technology and NASA Data
+
+- **Application:** Qt 6, QML, JavaScript, Qt Quick 3D, and a C++ launcher.
+- **Data Preparation:** Python and SpiceyPy.
+- **3D Modeling:** Blender.
+- **Lunar Terrain and Appearance:** [NASA CGI Moon Kit](https://svs.gsfc.nasa.gov/4720/) and [south-polar LOLA elevation data](https://pgda.gsfc.nasa.gov/products/90).
+- **Ephemerides and Reference Frames:** [NASA/JPL NAIF SPICE](https://naif.jpl.nasa.gov/naif/data_generic.html), including DE421.
+- **Earth Appearance:** NASA Blue Marble Next Generation.
+
+## Model Limitations
+
+The computational model supports preliminary exploration rather than mission certification.
+
+Global terrain spacing is approximately 474 m at the equator, with 80 m data in the bundled south-polar coverage. Small rocks and footpad-scale hazards remain unresolved.
+
+Visibility uses body-center geometry without eclipse or radio-link modeling. Solar-power estimates exclude batteries, thermal effects, and electrical losses. Availability statistics use hourly samples, and the lander animation uses a simplified vertical controller.
 
 ---
 
-*Created by P.A. Galochkin (@pentalux) and D.A. Golomako(@Lokgout) for the 2026 NASA International Space Apps Challenge*
-
-
-## Clone and open in Qt Design Studio
-
-Large runtime assets use Git LFS. Install Git LFS before cloning:
-
-```powershell
-git lfs install
-git clone https://github.com/pentalux/Lunar-Landing-Site-Navigator.git
-cd Lunar-Landing-Site-Navigator
-git lfs pull
-```
-
-Open `Hackathon.qmlproject` in Qt Design Studio. Runtime assets are included in the repository; Python is only needed to regenerate scientific data.
-
-## Build and package Windows x64
-
-The release is built with Qt 6.12.0 / MinGW 13.1, CMake and Ninja. Required Qt modules include Core, Gui, Widgets, Qml, Quick, Quick3D, QuickTimeline and ShaderTools. The project requires Qt 6.8 or newer.
-
-```powershell
-powershell -ExecutionPolicy Bypass -File tools/Build-Windows.ps1
-```
-
-The script defaults to the standard `C:\Qt` SDK locations. Override `-QtRoot`, `-MinGWRoot`, `-CMake` and `-Ninja` for another installation. To also build the single-file installer, supply `-NsisCompiler` pointing to `makensis.exe` from NSIS 3:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File tools/Build-Windows.ps1 -NsisCompiler C:\Tools\nsis\makensis.exe
-```
-
-Outputs are written to `releases/`: a complete portable folder, ZIP, optional installer and SHA-256 checksums. `windeployqt` from the matching SDK supplies runtime libraries and QML plugins. `qt.conf` selects the bundled directories.
-
-Scientific assets are packaged once using compressed BIG_RESOURCES. `navigator-resources.cmake` handles Qt Design Studio regeneration and excludes local Python preparation dependencies from application resources.
+*Created by P.A. Galochkin (@pentalux) and D.A. Golomako (@Lokgout) for the 2026 NASA International Space Apps Challenge.*
 
