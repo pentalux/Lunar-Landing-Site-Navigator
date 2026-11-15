@@ -7,7 +7,7 @@ Pane {
  id: root
  required property MissionController mission
  signal calculate()
- signal orbit()
+ signal restoreRequested()
  padding: 0
  Component.onCompleted: scroll.contentItem.contentY=0
  ColumnLayout { anchors.fill: parent; spacing: 8
@@ -47,10 +47,9 @@ Pane {
  }
  }
  Button { objectName: "calculateButton"; text: "Calculate simulation"; Layout.fillWidth: true; onClicked: root.calculate() }
- Button { text: "Orbit view"; Layout.fillWidth: true; onClicked: root.orbit() }
  RowLayout { Layout.fillWidth: true
  Button { text: "Save"; Layout.fillWidth: true; onClicked: root.mission.saveMission() }
- Button { text: "Restore"; Layout.fillWidth: true; onClicked: root.mission.loadMission() }
+ Button { text: "Restore"; Layout.fillWidth: true; onClicked: root.restoreRequested() }
  }
  }
  Popup { id: calendar; objectName: "calendarPopup"; x: root.width+5; y: 120; width: 320; height: 320; modal: true

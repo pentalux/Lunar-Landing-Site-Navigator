@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QCoreApplication::setOrganizationName("LunarNavigator");
     QCoreApplication::setApplicationName("LunarNavigator");
-    QCoreApplication::setApplicationVersion("0.10");
+    QCoreApplication::setApplicationVersion("1.0");
 
     QQmlApplicationEngine engine;
     const QUrl url(mainQmlFile);

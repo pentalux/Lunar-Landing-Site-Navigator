@@ -7,18 +7,18 @@ Unicode true
 !ifndef OUTPUT
   !error "Pass /DOUTPUT=<setup.exe>"
 !endif
-Name "Lunar Navigator 0.10"
+Name "Lunar Navigator 1.0"
 OutFile "${OUTPUT}"
 InstallDir "$LOCALAPPDATA\LunarNavigator"
 InstallDirRegKey HKCU "Software\LunarNavigator" "InstallDir"
 RequestExecutionLevel user
 ; Scientific resources inside the executable are already compressed.
 SetCompressor zlib
-VIProductVersion "0.10.0.0"
+VIProductVersion "1.0.0.0"
 VIAddVersionKey /LANG=1033 "ProductName" "Lunar Navigator"
-VIAddVersionKey /LANG=1033 "FileDescription" "Lunar Navigator 0.10 Setup"
-VIAddVersionKey /LANG=1033 "FileVersion" "0.10.0"
-VIAddVersionKey /LANG=1033 "ProductVersion" "0.10"
+VIAddVersionKey /LANG=1033 "FileDescription" "Lunar Navigator 1.0 Setup"
+VIAddVersionKey /LANG=1033 "FileVersion" "1.0.0"
+VIAddVersionKey /LANG=1033 "ProductVersion" "1.0"
 VIAddVersionKey /LANG=1033 "LegalCopyright" "Copyright (C) 2026 pentalux"
 !define MUI_ABORTWARNING
 !define MUI_FINISHPAGE_RUN "$INSTDIR\LunarNavigator.exe"
@@ -45,8 +45,8 @@ Section "Application" SEC_MAIN
   CreateShortcut "$SMPROGRAMS\Lunar Navigator\Lunar Navigator.lnk" "$INSTDIR\LunarNavigator.exe"
   CreateShortcut "$SMPROGRAMS\Lunar Navigator\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   WriteRegStr HKCU "Software\LunarNavigator" "InstallDir" "$INSTDIR"
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\LunarNavigator" "DisplayName" "Lunar Navigator 0.10"
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\LunarNavigator" "DisplayVersion" "0.10"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\LunarNavigator" "DisplayName" "Lunar Navigator 1.0"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\LunarNavigator" "DisplayVersion" "1.0"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\LunarNavigator" "Publisher" "pentalux"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\LunarNavigator" "DisplayIcon" "$INSTDIR\LunarNavigator.exe"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\LunarNavigator" "InstallLocation" "$INSTDIR"

@@ -6,14 +6,15 @@ param(
     [string]$Ninja = 'C:\Qt\Tools\Ninja\ninja.exe',
     [string]$NsisCompiler = '',
     [string]$ReleaseRoot = '',
+    [string]$BuildRoot = '',
     [switch]$SkipBuild
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
-$buildRoot = Join-Path $projectRoot 'build-release-0.10'
+if (!$BuildRoot) { $BuildRoot = Join-Path $projectRoot 'build-release-1.0' }
 if (!$ReleaseRoot) { $ReleaseRoot = Join-Path $projectRoot 'releases' }
 $ReleaseRoot = [IO.Path]::GetFullPath($ReleaseRoot)
-$stage = Join-Path $ReleaseRoot 'LunarNavigator-0.10-Windows-x64'
+$stage = Join-Path $ReleaseRoot 'LunarNavigator-1.0-Windows-x64'
 $env:PATH = "$MinGWRoot\bin;$QtRoot\bin;" + $env:PATH
 function Assert-NativeSuccess([string]$operation) {
     if ($LASTEXITCODE -ne 0) { throw "$operation failed with exit code $LASTEXITCODE" }
@@ -54,10 +55,10 @@ foreach ($directory in Get-ChildItem -LiteralPath $stage -Directory -Recurse | S
 }
 $uninstall | Set-Content -LiteralPath (Join-Path $ReleaseRoot 'uninstall-files.nsh') -Encoding utf8
 
-$zip = Join-Path $ReleaseRoot 'LunarNavigator-0.10-Windows-x64.zip'
+$zip = Join-Path $ReleaseRoot 'LunarNavigator-1.0-Windows-x64.zip'
 Compress-Archive -LiteralPath $stage -DestinationPath $zip -CompressionLevel Optimal -Force
 if ($NsisCompiler) {
-    $setup = Join-Path $ReleaseRoot 'LunarNavigator-0.10-Setup.exe'
+    $setup = Join-Path $ReleaseRoot 'LunarNavigator-1.0-Setup.exe'
     & $NsisCompiler /V2 "/DPAYLOAD=$stage" "/DOUTPUT=$setup" (Join-Path $projectRoot 'packaging/windows-installer.nsi')
     Assert-NativeSuccess 'NSIS installer'
 }
