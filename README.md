@@ -73,7 +73,8 @@ The comparison includes:
 
 Saved missions retain their own dates and hardware settings, while reference presets use the current settings. Equivalent dates and parameters should be used when comparing locations under the same conditions.
 
-%%%%%%%%%%%%
+<img width="1917" height="1077" alt="Screenshot 2026-11-15 192941" src="https://github.com/user-attachments/assets/3d1a3295-8397-4a86-a9e8-5c727f64c582" />
+
 
 ## Technology and NASA Data
 
